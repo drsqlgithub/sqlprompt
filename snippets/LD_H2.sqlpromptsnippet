@@ -1,0 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets>
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>LD_H2</Title>
+      <Shortcut>LD_H2</Shortcut>
+      <Description>H12 heading when making book code</Description>
+      <Author />
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>Section</ID>
+          <ToolTip />
+          <Default />
+        </Literal>
+      </Declarations>
+      <Code Language="sql"><![CDATA[----------------------------------------------------------------------------------------------------------
+--*****
+--$Section$
+--*****
+----------------------------------------------------------------------------------------------------------
+$CURSOR$]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

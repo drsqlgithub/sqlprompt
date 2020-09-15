@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets>
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>LD_Exprop_Index</Title>
+      <Shortcut>LD_Exprop_Index</Shortcut>
+      <Description>Adding extended property to index</Description>
+      <Author />
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>schemaName</ID>
+          <ToolTip />
+          <Default />
+        </Literal>
+        <Literal>
+          <ID>tablename</ID>
+          <ToolTip />
+          <Default />
+        </Literal>
+        <Literal>
+          <ID>indexname</ID>
+          <ToolTip />
+          <Default />
+        </Literal>
+      </Declarations>
+      <Code Language="sql"><![CDATA[	EXEC sys.sp_addextendedproperty @name = @property_name,
+									@value = @property_value,
+									@level0Type = 'Schema',
+									@level0Name = '$schemaName$',
+									@level1Type = 'Table',
+									@level1Name = '$tablename$',
+									@level2Type = 'Index',
+									@level2Name = '$indexname$';]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

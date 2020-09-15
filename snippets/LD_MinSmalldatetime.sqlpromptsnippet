@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets>
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>LD_MinSmalldatetime</Title>
+      <Shortcut>LD_MinSmalldatetime</Shortcut>
+      <Description>Min value for smalldatetime datatype</Description>
+      <Author />
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations />
+      <Code Language="sql"><![CDATA['1900-01-01']]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets>
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>LD_MinInt</Title>
+      <Shortcut>LD_MinInt</Shortcut>
+      <Description>Min value for int datatype</Description>
+      <Author />
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations />
+      <Code Language="sql"><![CDATA[-2147483648]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

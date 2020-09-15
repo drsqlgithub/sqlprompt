@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets>
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>LD_MaxDate</Title>
+      <Shortcut>LD_MaxDate</Shortcut>
+      <Description>Max value for date datatype</Description>
+      <Author />
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations />
+      <Code Language="sql"><![CDATA['9999-12-31']]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

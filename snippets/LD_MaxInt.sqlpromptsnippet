@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets>
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>LD_MaxInt</Title>
+      <Shortcut>LD_MaxInt</Shortcut>
+      <Description>Maximum value for int type</Description>
+      <Author />
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations />
+      <Code Language="sql"><![CDATA[2147483647]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

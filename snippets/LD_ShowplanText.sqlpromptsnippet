@@ -1,0 +1,25 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets>
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>LD_ShowplanText</Title>
+      <Shortcut>LD_ShowplanText</Shortcut>
+      <Description>Add showplan text to selected text. Use to get the text of a plan</Description>
+      <Author />
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations />
+      <Code Language="sql"><![CDATA[$SELECTIONSTART$
+SET SHOWPLAN_TEXT ON;
+GO
+$SELECTEDTEXT$
+GO
+SET SHOWPLAN_TEXT OFF;
+GO
+$SELECTIONEND$]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>
