@@ -1,0 +1,68 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets>
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>LD_GetNthDay</Title>
+      <Shortcut>LD_GetNthDay</Shortcut>
+      <Description>Get the next of a certain day of the week and offset</Description>
+      <Author />
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>DayOfWeek</ID>
+          <ToolTip />
+          <Default />
+        </Literal>
+        <Literal>
+          <ID>NumberOfWeeks</ID>
+          <ToolTip />
+          <Default>0</Default>
+        </Literal>
+        <Literal>
+          <ID>DateValue</ID>
+          <ToolTip />
+          <Default>sysdatetime()</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="sql"><![CDATA[DECLARE	@DayName varchar(20) = '$DayOfWeek$', --Spelled out the name of the day of the week
+	@NumberOfWeeks int = $NumberOfWeeks$, --positive or negative offset from the current week
+	@DateValue date = $DateValue$ --the day to start the calculation
+
+	SET NOCOUNT ON;
+    --if the date parameter is NULL, use current date
+	SET @dateValue = COALESCE(@DateValue,SYSDATETIME());
+
+	--this is a stand in for a calendar table to make it portable and not subject
+	--to any date settings
+	DECLARE @DaysOfWeek table (DayNumber int NOT NULL, DayName varchar(20) NOT NULL);
+
+	--load 14 days to make the math of days between days easy
+	INSERT INTO @DaysOfWeek(DayNumber, DayName)
+	VALUES(1,'Sunday'),(2,'Monday'),(3,'Tuesday'),(4,'Wednesday'),
+		  (5,'Thursday'),(6,'Friday'),(7,'Saturday'),
+		  (8,'Sunday'),(9,'Monday'),(10,'Tuesday'),(11,'Wednesday'),
+		  (12,'Thursday'),(13,'Friday'),(14,'Saturday');
+
+
+	--get the day number of the date that was passed in on the DateValue parameter
+	DECLARE @CurrentDayNumber int = (SELECT MIN(DayNumber) 
+									 FROM @DaysOfWeek 
+									 WHERE DayName = DATENAME(weekday, @DateValue));  
+
+	--get the next day number in the table to get the number of days to add
+	DECLARE @NextDayNumber int = (SELECT MIN(DayNumber) 
+								  FROM @DaysOfWeek 
+								  WHERE DayName = @DayName 
+								    AND DayNumber >= @CurrentDayNumber); 
+
+	--add the number of weeks to the date you calculate to be the upcoming day that matched your parameters
+	SELECT DATEADD(WEEK,@NumberOfWeeks,DATEADD(DAY, @NextDayNumber - @CurrentDayNumber, @DateValue));
+ 
+]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>
