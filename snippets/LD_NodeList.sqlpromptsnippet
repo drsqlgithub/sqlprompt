@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets>
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>LD_NodeList</Title>
+      <Shortcut>LD_NodeList</Shortcut>
+      <Description>List the nodes in the database to let you see what can be done with a node and other edges.</Description>
+      <Author />
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations>
+        <Literal>
+          <ID>NodeSchemaLike</ID>
+          <ToolTip />
+          <Default>%</Default>
+        </Literal>
+        <Literal>
+          <ID>NodeLike</ID>
+          <ToolTip />
+          <Default>%</Default>
+        </Literal>
+        <Literal>
+          <ID>IncludeAnyNode</ID>
+          <ToolTip />
+          <Default>1</Default>
+        </Literal>
+      </Declarations>
+      <Code Language="sql"><![CDATA[DECLARE @NodeSchemaLike nvarchar(200) = '$NodeSchemaLike$',
+		@NodeLike nvarchar(200) = '$NodeLike$',
+		@IncludeAnyNodeFlag bit = $IncludeAnyNode$;
+
+WITH UnconstrainedEdgeMix AS (
+--output unconstrained nodes as Any Node, rather than the cross product of all node types
+SELECT CONCAT(QUOTENAME(OBJECT_SCHEMA_NAME(edges.object_id)), 
+			 '.',QUOTENAME(OBJECT_NAME(edges.object_id))) AS EdgeName,
+			 CAST(NULL AS int) AS FromNodeId, -CAST(NULL AS int)  AS ToNodeId,
+			 'Orphan' AS DeleteAction
+FROM   sys.tables AS edges
+WHERE  edges.is_edge = 1
+  AND  NOT EXISTS (SELECT *
+	               FROM  sys.edge_constraints
+				   WHERE edges.object_id = edge_constraints.parent_object_id )
+), BaseRows AS (
+SELECT EdgeName, FromNodeId, ToNodeId, UnconstrainedEdgeMix.DeleteAction
+FROM UnconstrainedEdgeMix 
+UNION ALL
+--add the constrained edges in, with their id and actions
+SELECT CONCAT(QUOTENAME(OBJECT_SCHEMA_NAME(edge_constraints.parent_object_id)), 
+			 '.',QUOTENAME(OBJECT_NAME(edge_constraints.parent_object_id))) AS EdgeName,
+	   from_object_id AS FromNodeId,
+	   to_object_id AS ToNodeId,
+	   edge_constraints.delete_referential_action_desc AS DeleteAction
+FROM   sys.edge_constraint_clauses
+		JOIN sys.edge_constraints
+			ON edge_constraints.object_id = edge_constraint_clauses.object_id
+),
+--And the last CTE lets you add filters to the query so you can just look for what Node1 can connect to 
+--explicitly (by name) or implicitly (by looking for Any in the node and schema).
+FilterFrom AS (
+SELECT COALESCE(OBJECT_SCHEMA_NAME(BaseRows.FromNodeId),'Any') AS NodeSchema,
+		COALESCE(OBJECT_NAME(BaseRows.FromNodeId),'Any') AS Node, EdgeName, 'From' AS Relationship, DeleteAction
+FROM   BaseRows
+UNION ALL
+SELECT COALESCE(OBJECT_SCHEMA_NAME(BaseRows.FromNodeId),'Any') AS NodeSchema,
+	   COALESCE(OBJECT_NAME(BaseRows.FromNodeId),'Any') AS Node, EdgeName, 'To' AS Relationship, DeleteAction
+FROM   BaseRows)
+SELECT *
+FROM   FilterFrom
+WHERE  (FilterFrom.NodeSchema LIKE @NodeSchemaLike
+  AND  Node LIKE @NodeLike
+  AND Node <> 'Any'
+  AND FilterFrom.NodeSchema <> 'Any')
+  OR 
+   (Node = 'Any' 
+      AND @IncludeAnyNodeFlag = 1)
+ORDER BY FilterFrom.NodeSchema, FilterFrom.Node, FilterFrom.Relationship, FilterFrom.EdgeName;]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>

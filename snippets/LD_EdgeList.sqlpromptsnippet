@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<CodeSnippets>
+  <CodeSnippet Format="1.0.0">
+    <Header>
+      <Title>LD_EdgeList</Title>
+      <Shortcut>LD_EdgeList</Shortcut>
+      <Description>Use to get a list of edges in a database along with what they can be used for</Description>
+      <Author />
+      <SnippetTypes>
+        <SnippetType>Expansion</SnippetType>
+      </SnippetTypes>
+    </Header>
+    <Snippet>
+      <Declarations />
+      <Code Language="sql"><![CDATA[WITH Constraints AS (
+SELECT object_id AS edge_object_id,
+	   CONCAT(QUOTENAME(OBJECT_SCHEMA_NAME(edge_constraints.parent_object_id)), 
+			 '.',QUOTENAME(OBJECT_NAME(edge_constraints.parent_object_id))) AS ObjectName,
+	   QUOTENAME(name) AS EdgeConstraintName, 
+	   delete_referential_action_desc AS DeleteAction
+FROM  sys.edge_constraints),
+Clauses AS (SELECT object_id AS edge_object_id, 
+	   CONCAT(QUOTENAME(OBJECT_SCHEMA_NAME(from_object_id)), '.',QUOTENAME(OBJECT_NAME(from_object_id))) AS FromNode,
+	   from_object_id,
+	   CONCAT(QUOTENAME(OBJECT_SCHEMA_NAME(to_object_id)), '.',QUOTENAME(OBJECT_NAME(to_object_id))) AS ToNode,
+	   to_object_id
+FROM   sys.edge_constraint_clauses)
+SELECT Constraints.ObjectName, Constraints.EdgeConstraintName, Constraints.DeleteAction,
+	   --aggregate allowable connections
+	   STRING_AGG(CONCAT('{',Clauses.FromNode,' -> ',Clauses.ToNode,'}'),'; ') AS AllowedConnections
+FROM   constraints
+		JOIN Clauses
+			ON Clauses.edge_object_id = Constraints.edge_object_id
+GROUP BY Constraints.ObjectName, Constraints.EdgeConstraintName, Constraints.DeleteAction
+UNION ALL 
+--add in any edge that does not have a constraint, and indicate it can be used for any connection
+SELECT CONCAT(QUOTENAME(OBJECT_SCHEMA_NAME(object_id)),'.',QUOTENAME(name)) AS ObjectName, 
+	   'N\A','N\A', '{Any Node -> Any Node}'
+FROM   sys.tables
+WHERE  tables.is_edge = 1
+ AND   NOT EXISTS (SELECT *
+				   FROM   sys.edge_constraints
+				   WHERE  edge_constraints.parent_object_id = tables.object_id);]]></Code>
+    </Snippet>
+  </CodeSnippet>
+</CodeSnippets>
